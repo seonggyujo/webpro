@@ -24,21 +24,12 @@ This is a React website project built with Vite, featuring a simple responsive l
 
 The application follows a simple single-component architecture with no routing or state management. All content is static and rendered in sections (home, about, contact) within the main App component.
 
-## Project Structure
-
-```
-src/
-├── main.jsx          # Application entry point - renders App into #root
-├── App.jsx           # Main application component (Header + Main sections + Footer)
-├── App.css           # Component-specific styles with responsive breakpoints
-└── index.css         # Global styles and CSS resets
-```
-
 **Current Implementation Notes:**
 - Single monolithic component in App.jsx containing all page sections (home, about, contact)
 - No routing library - all sections rendered on single page
 - No state management - entirely static content
 - Responsive design with 768px breakpoint (mobile-first approach)
+- Two HTML files exist: `index.html` (root) is for Vite/React build, while legacy static HTML structure remains but is not used by the React app
 
 ## Code Style Guidelines
 
@@ -59,6 +50,7 @@ src/
 - Public IP: 158.179.166.133
 - Private IP: 10.0.0.224
 - User: ubuntu
+- Live URL: http://158.179.166.133
 
 **SSH Access:**
 ```bash
@@ -72,3 +64,32 @@ SSH Key Path: `/home/seonggyu/Downloads/oracle/ssh-key-2025-10-05.key` (permissi
 - Public Subnet: public-subnet-vnc-main (10.0.0.0/24)
 - Internet Gateway: Enabled
 - Security Rules: TCP ports 22 (SSH), 80 (HTTP), 443 (HTTPS) open to internet (0.0.0.0/0)
+- iptables: Configured to allow ports 22, 80, 443 (rules saved with netfilter-persistent)
+
+**Deployment Setup:**
+- Web Server: Nginx 1.24.0
+- Project Location: `/var/www/webpro`
+- Document Root: `/var/www/webpro/dist` (served by Nginx)
+- Node.js: v18.19.1
+- npm: 9.2.0
+
+**Deployment Workflow:**
+```bash
+# 1. Local: Push changes to GitHub
+git add .
+git commit -m "Description"
+git push origin main
+
+# 2. Server: Pull and rebuild
+ssh -i ~/Downloads/oracle/ssh-key-2025-10-05.key ubuntu@158.179.166.133
+cd /var/www/webpro
+git pull origin main
+npm run build
+# Nginx automatically serves updated dist/ folder
+```
+
+**Server File Locations:**
+- Nginx config: `/etc/nginx/sites-available/default`
+- Nginx logs: `/var/log/nginx/`
+- Project repo: `/var/www/webpro/`
+- Built files: `/var/www/webpro/dist/`
